@@ -42,6 +42,10 @@ class PrefixLayer : public kaleidoscope::Plugin {
    static const dict_t *dict;
 
    EventHandlerResult onKeyswitchEvent(Key &mapped_key, byte row, byte col, uint8_t keyState);
+  EventHandlerResult beforeReportingState();
+
+ private:
+  bool key_toggled_on_{false};
 };
 };
 };

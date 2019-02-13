@@ -37,6 +37,14 @@ EventHandlerResult PrefixLayer::onKeyswitchEvent(Key &mapped_key, byte row, byte
   }
 
   if (keyToggledOn(keyState) && mapped_key.raw <= kaleidoscope::ranges::FIRST) {
+    key_toggled_on_ = true;
+  }
+
+  return EventHandlerResult::OK;
+}
+
+EventHandlerResult PrefixLayer::beforeReportingState() {
+  if (key_toggled_on_) {
     for (uint8_t i = 0;; i++) {
       uint16_t layer = pgm_read_word(&(dict[i].layer));
       if (layer == 0xFFFF) break;
@@ -60,6 +68,7 @@ EventHandlerResult PrefixLayer::onKeyswitchEvent(Key &mapped_key, byte row, byte
       }
     }
   }
+  key_toggled_on_ = false;
 
   return EventHandlerResult::OK;
 }
