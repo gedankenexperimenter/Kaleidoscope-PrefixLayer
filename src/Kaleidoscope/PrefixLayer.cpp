@@ -41,6 +41,7 @@ EventHandlerResult PrefixLayer::onKeyswitchEvent(Key &mapped_key, byte row, byte
       uint16_t layer = pgm_read_word(&(dict[i].layer));
       if (layer == 0xFFFF) break;
       if (Layer.isActive(layer)) {
+        hid::stashKeyboardReport();
         for (uint8_t j = 0;; j++) {
           Key k;
           k.raw = pgm_read_word(&(dict[i].prefix_seq[j].raw));
@@ -57,6 +58,7 @@ EventHandlerResult PrefixLayer::onKeyswitchEvent(Key &mapped_key, byte row, byte
                                WAS_PRESSED | INJECTED);
         }
         hid::sendKeyboardReport();
+        hid::restoreKeyboardReport();
       }
     }
   }
