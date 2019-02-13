@@ -37,14 +37,16 @@ EventHandlerResult PrefixLayer::onKeyswitchEvent(Key &mapped_key, byte row, byte
   }
 
   if (keyToggledOn(keyState) && mapped_key.raw <= kaleidoscope::ranges::FIRST) {
-    key_toggled_on_ = true;
+    // If a keypress that might need a prefix sequence has been detected, record it
+    key_toggled_on_ = mapped_key;
+    return EventHandlerResult::EVENT_CONSUMED;
   }
 
   return EventHandlerResult::OK;
 }
 
 EventHandlerResult PrefixLayer::beforeReportingState() {
-  if (key_toggled_on_) {
+  if (key_toggled_on_ != Key_NoKey) {
     for (uint8_t i = 0;; i++) {
       uint16_t layer = pgm_read_word(&(dict[i].layer));
       if (layer == 0xFFFF) break;
@@ -65,10 +67,13 @@ EventHandlerResult PrefixLayer::beforeReportingState() {
                                WAS_PRESSED | INJECTED);
         }
         hid::sendKeyboardReport();
+
+        handleKeyswitchEvent(detected_key_, UNKNOWN_KEYSWITCH_LOCATION,
+                             IS_PRESSED | INJECTED);
       }
     }
   }
-  key_toggled_on_ = false;
+  key_toggled_on_ = Key_NoKey;
 
   return EventHandlerResult::OK;
 }

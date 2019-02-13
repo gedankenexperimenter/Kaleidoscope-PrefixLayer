@@ -45,7 +45,7 @@ class PrefixLayer : public kaleidoscope::Plugin {
   EventHandlerResult beforeReportingState();
 
  private:
-  bool key_toggled_on_{false};
+  Key key_toggled_on_{Key_NoKey};
 };
 };
 };
